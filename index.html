@@ -3,125 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>暗号問題答え合わせ</title>
+    <title>暗号問題</title>
     <style>
+        /* 画面全体を真っ白にし、要素を真ん中に集める */
         body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f4f7f6;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
-        }
-        .quiz-container {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 450px;
+            font-family: sans-serif;
             text-align: center;
         }
+
+        /* コンテナの幅を設定 */
+        .container {
+            width: 90%;
+            max-width: 500px;
+        }
+
+        /* 出題欄（テキストのみ） */
         .question-box {
-            background-color: #eef2f5;
-            padding: 20px;
-            border-radius: 8px;
             font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #333;
-            border-left: 5px solid #3498db;
+            color: #000000;
+            line-height: 1.6;
+            /* 出題欄と回答欄の間隔を少し広くあける */
+            margin-bottom: 50px; 
         }
+
+        /* 質素な回答欄（枠線だけのシンプルな箱） */
         input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 2px solid #bdc3c7;
-            border-radius: 6px;
+            width: 80%;
+            padding: 8px;
             font-size: 1rem;
-            box-sizing: border-box;
-            transition: border-color 0.3s;
-        }
-        input[type="text"]:focus {
-            border-color: #3498db;
+            border: 1px solid #000000;
+            border-radius: 0; /* 角の丸みをなくして無機質に */
             outline: none;
+            text-align: center; /* 入力する文字も中央揃え */
+            margin-bottom: 20px;
         }
+
+        /* 質素なボタン */
         button {
-            width: 100%;
-            padding: 12px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
+            display: block;
+            margin: 0 auto;
+            padding: 6px 20px;
+            font-size: 0.9rem;
+            background-color: #ffffff;
+            color: #000000;
+            border: 1px solid #000000;
             cursor: pointer;
-            font-weight: bold;
-            transition: background 0.3s;
         }
-        button:hover {
-            background-color: #2980b9;
-        }
+
+        /* 結果表示テキスト */
         .result {
-            margin-top: 20px;
-            font-size: 1.1rem;
-            font-weight: bold;
+            margin-top: 30px;
+            font-size: 1rem;
             min-height: 24px;
         }
-        .success { color: #27ae60; }
-        .error { color: #c0392b; }
     </style>
 </head>
 <body>
 
-<div class="quiz-container">
-    <h2>暗号解読クエスト</h2>
+<div class="container">
     <div class="question-box" id="question">
-        ここに問題文が入ります（例：大文字の「A」を3つ進めると？）
+        ここに問題文が入ります
     </div>
 
-    <input type="text" id="answerInput" placeholder="答えを入力してください" autocomplete="off">
-    <button onclick="checkAnswer()">回答を送信</button>
+    <input type="text" id="answerInput" placeholder="" autocomplete="off">
+    <button onclick="checkAnswer()">回答</button>
 
     <div id="resultMessage" class="result"></div>
 </div>
 
 <script>
     // 【設定1】出題する問題文
-    const questionText = "フォーミュラ1世界選手権1991年王者は？";
+    const questionText = "「たすけて」を1文字ずつ後ろにずらすと？ (例:あ→い)";
     
-    // 【設定2】正解のハッシュ値 (あらかじめ暗号化した文字列)
-    // ※この設定値は、正解が「ちせとぬ」の時の値です。
-    const correctHash = "d42c2c5bec44bee4ca09af94fbf6de16e6988cfaeaa0b1daccca067620a4eb92";
+    // 【設定2】正解のハッシュ値 (現在は「ちせとぬ」の時の値です)
+    const correctHash = "7bc3a9e62b080034a70cb653112be8f0412803b9b4bc063fbf71a53e34b9d073";
 
     // 画面に問題を表示
     document.getElementById("question").textContent = questionText;
 
-    // 判定ロジック（SHA-256暗号化を使用）
+    // 判定ロジック
     async function checkAnswer() {
         const userInput = document.getElementById("answerInput").value.trim();
         const resultMessage = document.getElementById("resultMessage");
 
         if (!userInput) {
-            resultMessage.textContent = "文字を入力してください。";
-            resultMessage.className = "result error";
+            resultMessage.textContent = "";
             return;
         }
 
-        // ユーザーの入力をハッシュ化（暗号化）する処理
+        // ユーザーの入力をハッシュ化
         const encoder = new TextEncoder();
         const data = encoder.encode(userInput);
         const hashBuffer = await crypto.subtle.digest('SHA-256', data);
         const hashArray = Array.from(new Uint8Array(hashBuffer));
         const userHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-        // 答え合わせ
+        // 答え合わせ（結果もテキストだけでシンプルに表示）
         if (userHash === correctHash) {
-            resultMessage.textContent = "well done";
-            resultMessage.className = "result success";
+            resultMessage.textContent = "正解";
+            resultMessage.style.color = "#000000";
         } else {
-            resultMessage.textContent = "lmao";
-            resultMessage.className = "result error";
+            resultMessage.textContent = "不正解";
+            resultMessage.style.color = "#000000";
         }
     }
 </script>
