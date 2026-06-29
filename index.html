@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>暗号解読プラットフォーム</title>
     <style>
-        /* 画面全体を真っ白にし、要素を中央揃えにする */
         body {
             background-color: #ffffff;
             margin: 0;
@@ -14,35 +13,26 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            /* Windows 7といえば「メイリオ」 */
             font-family: "Meiryo", "メイリオ", "MS PGothic", sans-serif;
             text-align: center;
             color: #333333;
         }
-
-        /* コンテナ */
         .container {
             width: 90%;
             max-width: 500px;
         }
-
-        /* 出題欄（すっきりしたテキスト） */
         .question-box {
             font-size: 16px;
-            color: #1e395b; /* ほんのり青みがかった文字色 */
+            color: #1e395b;
             line-height: 1.6;
-            /* 出題欄と回答欄の間隔を離す */
             margin-bottom: 70px;
             font-weight: normal;
         }
-
-        /* Windows 7風の少し丸みと立体感のある回答欄 */
         input[type="text"] {
             width: 260px;
             padding: 6px 10px;
             font-size: 14px;
             font-family: inherit;
-            /* Win7風の淡い水色の枠線と滑らかなグラデーション */
             border: 1px solid #abc1de;
             border-top-color: #7e9cb9;
             border-radius: 3px;
@@ -54,14 +44,10 @@
             box-sizing: border-box;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
-
-        /* 回答欄にカーソルが当たった時の青い光彩（Aero意識） */
         input[type="text"]:focus {
             border-color: #3d7bad;
             box-shadow: inset 1px 1px 1px rgba(0,0,0,0.05), 0 0 4px rgba(51,153,255,0.6);
         }
-
-        /* Windows 7のシステムボタン風デザイン（画像不使用） */
         button {
             display: block;
             margin: 0 auto;
@@ -70,30 +56,22 @@
             font-family: inherit;
             color: #1e2125;
             cursor: pointer;
-            
-            /* 特有の薄いグレー〜水色のグラデーションと角丸 */
             background: linear-gradient(to bottom, #f2f2f2 0%, #ebebeb 50%, #dddddd 51%, #cfcfcf 100%);
             border: 1px solid #707070;
             border-radius: 3px;
             box-shadow: inset 0 1px 0 #ffffff, 0 1px 1px rgba(0,0,0,0.1);
             outline: none;
         }
-
-        /* ボタンにマウスを乗せたときの、ふわっと青く光るホバーエフェクト */
         button:hover {
             background: linear-gradient(to bottom, #eaf6fd 0%, #d9f0fc 50%, #bee6fd 51%, #a7d9f5 100%);
             border-color: #3c7fb1;
             box-shadow: inset 0 1px 0 #ffffff, 0 0 3px rgba(60,127,177,0.5);
         }
-
-        /* ボタンを押したとき（カチッと沈む） */
         button:active {
             background: linear-gradient(to bottom, #e5f4fc 0%, #c4e5f8 50%, #98d1ef 51%, #68b3db 100%);
             border-color: #2c628b;
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
         }
-
-        /* 結果表示テキスト */
         .result {
             margin-top: 40px;
             font-size: 14px;
@@ -105,36 +83,31 @@
 <body>
 
 <div class="container">
-    <!-- 出題欄 -->
     <div class="question-box" id="question">
         問題を取得しています...
     </div>
 
-    <!-- 回答欄 -->
     <input type="text" id="answerInput" autocomplete="off" placeholder="">
     <button onclick="checkAnswer()">OK</button>
 
-    <!-- 結果表示欄 -->
     <div id="resultMessage" class="result"></div>
 </div>
 
 <script>
-// 【設定1】出題する問題文
-    const questionText = "1991年formula 1世界選手権　王者1";
+    // 【設定1】出題する問題文
+    const questionText = "「たすけて」を1文字ずつ後ろにずらすと？ (例:あ→い)";
     
     // 【設定2】正解のハッシュ値 (現在は「ちせとぬ」の時の値です)
-    const correctHash = "d42c2c5bec44bee4ca09af94fbf6de16e6988cfaeaa0b1daccca067620a4eb92";
+    const correctHash = "7bc3a9e62b080034a70cb653112be8f0412803b9b4bc063fbf71a53e34b9d073";
 
     // 画面に問題を表示
     document.getElementById("question").textContent = questionText;
 
     // 判定ロジック
     async function checkAnswer() {
-        // 1. 入力された文字を取得
         let userInput = document.getElementById("answerInput").value;
 
-        // 2. 【重要】全角半角の「空白」と「中黒」をすべて削除する
-        // [  ] で半角・全角スペース、[・·] で全角・半角中黒を対象にしています
+        // 全角半角の「空白」と「中黒」をすべて削除
         userInput = userInput.replace(/[  ・·]/g, "");
 
         const resultMessage = document.getElementById("resultMessage");
@@ -158,3 +131,7 @@
             resultMessage.textContent = "不正解";
         }
     }
+</script>
+
+</body>
+</html>
