@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>暗号解読システム V1.0</title>
+    <title>暗号解読プラットフォーム</title>
     <style>
-        /* 全体の設定：真っ白な背景、等幅フォント、中央揃え */
+        /* 画面全体を真っ白にし、要素を中央揃えにする */
         body {
             background-color: #ffffff;
             margin: 0;
@@ -14,101 +14,119 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            /* 古いサイトっぽく、MS ゴシックや等幅フォントを指定 */
-            font-family: "MS Gothic", "Osaka-Mono", monospace; 
+            /* Windows 7といえば「メイリオ」 */
+            font-family: "Meiryo", "メイリオ", "MS PGothic", sans-serif;
             text-align: center;
-            color: #000000;
+            color: #333333;
         }
 
         /* コンテナ */
         .container {
             width: 90%;
-            max-width: 600px;
+            max-width: 500px;
         }
 
-        /* 出題欄（テキストのみ） */
+        /* 出題欄（すっきりしたテキスト） */
         .question-box {
-            font-size: 14pt; /* サイズをpt指定にして少し古く */
-            line-height: 1.5;
-            /* 出題欄と回答欄の間隔 */
-            margin-bottom: 60px; 
-            font-weight: bold;
+            font-size: 16px;
+            color: #1e395b; /* ほんのり青みがかった文字色 */
+            line-height: 1.6;
+            /* 出題欄と回答欄の間隔を離す */
+            margin-bottom: 70px;
+            font-weight: normal;
         }
 
-        /* 古典的な回答欄（内側に影がある立体的な枠） */
+        /* Windows 7風の少し丸みと立体感のある回答欄 */
         input[type="text"] {
-            width: 250px; /* 横幅を固定 */
-            padding: 3px; /* パディングを小さく */
-            font-size: 12pt;
-            /* 3D効果（凹み）を出すための古いスタイルの枠線 */
-            border-top: 2px solid #808080;
-            border-left: 2px solid #808080;
-            border-bottom: 2px solid #ffffff;
-            border-right: 2px solid #ffffff;
-            background-color: #ffffff;
+            width: 260px;
+            padding: 6px 10px;
+            font-size: 14px;
+            font-family: inherit;
+            /* Win7風の淡い水色の枠線と滑らかなグラデーション */
+            border: 1px solid #abc1de;
+            border-top-color: #7e9cb9;
+            border-radius: 3px;
+            background: linear-gradient(to bottom, #f2f7fa 0%, #ffffff 15%);
+            box-shadow: inset 1px 1px 2px rgba(0,0,0,0.08);
             outline: none;
-            text-align: left; /* 入力文字は左揃えが古典的 */
-            margin-bottom: 25px;
+            text-align: center;
+            margin-bottom: 30px;
             box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
 
-        /* 古典的なボタン（Windows 95風の立体的な灰色ボタン） */
+        /* 回答欄にカーソルが当たった時の青い光彩（Aero意識） */
+        input[type="text"]:focus {
+            border-color: #3d7bad;
+            box-shadow: inset 1px 1px 1px rgba(0,0,0,0.05), 0 0 4px rgba(51,153,255,0.6);
+        }
+
+        /* Windows 7のシステムボタン風デザイン（画像不使用） */
         button {
             display: block;
             margin: 0 auto;
-            padding: 4px 15px;
-            font-size: 10pt;
-            font-family: "MS Gothic", sans-serif;
-            background-color: #c0c0c0; /* 灰色の背景 */
-            color: #000000;
+            padding: 5px 24px;
+            font-size: 13px;
+            font-family: inherit;
+            color: #1e2125;
             cursor: pointer;
-            /* 3D効果（凸凸）を出すための枠線 */
-            border-top: 2px solid #ffffff;
-            border-left: 2px solid #ffffff;
-            border-bottom: 2px solid #000000;
-            border-right: 2px solid #000000;
+            
+            /* 特有の薄いグレー〜水色のグラデーションと角丸 */
+            background: linear-gradient(to bottom, #f2f2f2 0%, #ebebeb 50%, #dddddd 51%, #cfcfcf 100%);
+            border: 1px solid #707070;
+            border-radius: 3px;
+            box-shadow: inset 0 1px 0 #ffffff, 0 1px 1px rgba(0,0,0,0.1);
             outline: none;
         }
-        
-        /* ボタンを押したときの凹む演出 */
+
+        /* ボタンにマウスを乗せたときの、ふわっと青く光るホバーエフェクト */
+        button:hover {
+            background: linear-gradient(to bottom, #eaf6fd 0%, #d9f0fc 50%, #bee6fd 51%, #a7d9f5 100%);
+            border-color: #3c7fb1;
+            box-shadow: inset 0 1px 0 #ffffff, 0 0 3px rgba(60,127,177,0.5);
+        }
+
+        /* ボタンを押したとき（カチッと沈む） */
         button:active {
-            border-top: 2px solid #000000;
-            border-left: 2px solid #000000;
-            border-bottom: 2px solid #ffffff;
-            border-right: 2px solid #ffffff;
-            padding: 5px 14px 3px 16px; /* 位置を少しずらす */
+            background: linear-gradient(to bottom, #e5f4fc 0%, #c4e5f8 50%, #98d1ef 51%, #68b3db 100%);
+            border-color: #2c628b;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
         }
 
         /* 結果表示テキスト */
         .result {
             margin-top: 40px;
-            font-size: 12pt;
+            font-size: 14px;
             min-height: 24px;
+            color: #4c4c4c;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <!-- 出題欄 -->
     <div class="question-box" id="question">
-        問題の読み込み中...
+        問題を取得しています...
     </div>
 
-    <input type="text" id="answerInput" autocomplete="off">
-    <button onclick="checkAnswer()">回答する</button>
+    <!-- 回答欄 -->
+    <input type="text" id="answerInput" autocomplete="off" placeholder="">
+    <button onclick="checkAnswer()">OK</button>
 
+    <!-- 結果表示欄 -->
     <div id="resultMessage" class="result"></div>
 </div>
 
 <script>
     // 【設定1】出題する問題文
-    const questionText = "【暗号番号：001】\n「たすけて」を1文字ずつ後ろにずらすと？ (例:あ→い)";
+    const questionText = "「たすけて」を1文字ずつ後ろにずらすと？ (例:あ→い)";
     
     // 【設定2】正解のハッシュ値 (現在は「ちせとぬ」の時の値です)
     const correctHash = "7bc3a9e62b080034a70cb653112be8f0412803b9b4bc063fbf71a53e34b9d073";
 
-    // 画面に問題を表示（改行に対応）
-    document.getElementById("question").innerText = questionText;
+    // 画面に問題を表示
+    document.getElementById("question").textContent = questionText;
 
     // 判定ロジック
     async function checkAnswer() {
@@ -127,11 +145,11 @@
         const hashArray = Array.from(new Uint8Array(hashBuffer));
         const userHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-        // 答え合わせ（結果表示もテキストのみで質素に）
+        // 答え合わせ
         if (userHash === correctHash) {
-            resultMessage.textContent = ">>> 判定：正解";
+            resultMessage.textContent = "正解";
         } else {
-            resultMessage.textContent = ">>> 判定：不正解";
+            resultMessage.textContent = "不正解";
         }
     }
 </script>
