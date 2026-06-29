@@ -107,8 +107,8 @@
     async function checkAnswer() {
         let userInput = document.getElementById("answerInput").value;
 
-        // 全角半角の「空白」と「中黒」をすべて削除
-        userInput = userInput.replace(/[  ・·]/g, "");
+        // 全角半角スペース・中黒を確実に削除する最新版
+userInput = userInput.replace(/[\s\u3000・·]/g, "");
 
         const resultMessage = document.getElementById("resultMessage");
 
