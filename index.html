@@ -119,8 +119,8 @@
 </div>
 
 <script>
-    // 【設定1】出題する問題文
-    const questionText = "1991年formula 1世界選手権 王者";
+// 【設定1】出題する問題文
+    const questionText = "1991年formula 1世界選手権　王者";
     
     // 【設定2】正解のハッシュ値 (現在は「ちせとぬ」の時の値です)
     const correctHash = "d42c2c5bec44bee4ca09af94fbf6de16e6988cfaeaa0b1daccca067620a4eb92";
@@ -130,7 +130,13 @@
 
     // 判定ロジック
     async function checkAnswer() {
-        const userInput = document.getElementById("answerInput").value.trim();
+        // 1. 入力された文字を取得
+        let userInput = document.getElementById("answerInput").value;
+
+        // 2. 【重要】全角半角の「空白」と「中黒」をすべて削除する
+        // [  ] で半角・全角スペース、[・·] で全角・半角中黒を対象にしています
+        userInput = userInput.replace(/[  ・·]/g, "");
+
         const resultMessage = document.getElementById("resultMessage");
 
         if (!userInput) {
@@ -152,7 +158,3 @@
             resultMessage.textContent = "不正解";
         }
     }
-</script>
-
-</body>
-</html>
