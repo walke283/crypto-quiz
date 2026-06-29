@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>暗号問題</title>
+    <title>暗号解読システム V1.0</title>
     <style>
-        /* 画面全体を真っ白にし、要素を真ん中に集める */
+        /* 全体の設定：真っ白な背景、等幅フォント、中央揃え */
         body {
             background-color: #ffffff;
             margin: 0;
@@ -14,53 +14,75 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-family: sans-serif;
+            /* 古いサイトっぽく、MS ゴシックや等幅フォントを指定 */
+            font-family: "MS Gothic", "Osaka-Mono", monospace; 
             text-align: center;
+            color: #000000;
         }
 
-        /* コンテナの幅を設定 */
+        /* コンテナ */
         .container {
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
         }
 
         /* 出題欄（テキストのみ） */
         .question-box {
-            font-size: 1.2rem;
-            color: #000000;
-            line-height: 1.6;
-            /* 出題欄と回答欄の間隔を少し広くあける */
-            margin-bottom: 50px; 
+            font-size: 14pt; /* サイズをpt指定にして少し古く */
+            line-height: 1.5;
+            /* 出題欄と回答欄の間隔 */
+            margin-bottom: 60px; 
+            font-weight: bold;
         }
 
-        /* 質素な回答欄（枠線だけのシンプルな箱） */
+        /* 古典的な回答欄（内側に影がある立体的な枠） */
         input[type="text"] {
-            width: 80%;
-            padding: 8px;
-            font-size: 1rem;
-            border: 1px solid #000000;
-            border-radius: 0; /* 角の丸みをなくして無機質に */
+            width: 250px; /* 横幅を固定 */
+            padding: 3px; /* パディングを小さく */
+            font-size: 12pt;
+            /* 3D効果（凹み）を出すための古いスタイルの枠線 */
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-bottom: 2px solid #ffffff;
+            border-right: 2px solid #ffffff;
+            background-color: #ffffff;
             outline: none;
-            text-align: center; /* 入力する文字も中央揃え */
-            margin-bottom: 20px;
+            text-align: left; /* 入力文字は左揃えが古典的 */
+            margin-bottom: 25px;
+            box-sizing: border-box;
         }
 
-        /* 質素なボタン */
+        /* 古典的なボタン（Windows 95風の立体的な灰色ボタン） */
         button {
             display: block;
             margin: 0 auto;
-            padding: 6px 20px;
-            font-size: 0.9rem;
-            background-color: #ffffff;
+            padding: 4px 15px;
+            font-size: 10pt;
+            font-family: "MS Gothic", sans-serif;
+            background-color: #c0c0c0; /* 灰色の背景 */
             color: #000000;
-            border: 1px solid #000000;
             cursor: pointer;
+            /* 3D効果（凸凸）を出すための枠線 */
+            border-top: 2px solid #ffffff;
+            border-left: 2px solid #ffffff;
+            border-bottom: 2px solid #000000;
+            border-right: 2px solid #000000;
+            outline: none;
+        }
+        
+        /* ボタンを押したときの凹む演出 */
+        button:active {
+            border-top: 2px solid #000000;
+            border-left: 2px solid #000000;
+            border-bottom: 2px solid #ffffff;
+            border-right: 2px solid #ffffff;
+            padding: 5px 14px 3px 16px; /* 位置を少しずらす */
         }
 
         /* 結果表示テキスト */
         .result {
-            margin-top: 30px;
-            font-size: 1rem;
+            margin-top: 40px;
+            font-size: 12pt;
             min-height: 24px;
         }
     </style>
@@ -69,24 +91,24 @@
 
 <div class="container">
     <div class="question-box" id="question">
-        ここに問題文が入ります
+        問題の読み込み中...
     </div>
 
-    <input type="text" id="answerInput" placeholder="" autocomplete="off">
-    <button onclick="checkAnswer()">回答</button>
+    <input type="text" id="answerInput" autocomplete="off">
+    <button onclick="checkAnswer()">回答する</button>
 
     <div id="resultMessage" class="result"></div>
 </div>
 
 <script>
     // 【設定1】出題する問題文
-    const questionText = "「たすけて」を1文字ずつ後ろにずらすと？ (例:あ→い)";
+    const questionText = "【暗号番号：001】\n「たすけて」を1文字ずつ後ろにずらすと？ (例:あ→い)";
     
     // 【設定2】正解のハッシュ値 (現在は「ちせとぬ」の時の値です)
     const correctHash = "7bc3a9e62b080034a70cb653112be8f0412803b9b4bc063fbf71a53e34b9d073";
 
-    // 画面に問題を表示
-    document.getElementById("question").textContent = questionText;
+    // 画面に問題を表示（改行に対応）
+    document.getElementById("question").innerText = questionText;
 
     // 判定ロジック
     async function checkAnswer() {
@@ -105,13 +127,11 @@
         const hashArray = Array.from(new Uint8Array(hashBuffer));
         const userHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-        // 答え合わせ（結果もテキストだけでシンプルに表示）
+        // 答え合わせ（結果表示もテキストのみで質素に）
         if (userHash === correctHash) {
-            resultMessage.textContent = "正解";
-            resultMessage.style.color = "#000000";
+            resultMessage.textContent = ">>> 判定：正解";
         } else {
-            resultMessage.textContent = "不正解";
-            resultMessage.style.color = "#000000";
+            resultMessage.textContent = ">>> 判定：不正解";
         }
     }
 </script>
